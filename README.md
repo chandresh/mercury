@@ -113,6 +113,30 @@ mercury.js).
 
     rake mercury_engine:install:migrations
     rake db:migrate
+    
+### For Mongoid + MongoDB + Paperclip (quick hack)
+
+Add gem "mongoid-paperclip", :require => "mongoid_paperclip" to Gemfile. Now create a file under image.rb models/mercury
+with following:
+
+    class Mercury::Image
+      include Mongoid::Document
+      include Mongoid::Paperclip
+
+     has_mongoid_attached_file :image
+
+     validates_presence_of :image
+
+     delegate :url, :to => :image
+
+     def serializable_hash(options = nil)
+       options ||= {}
+       options[:methods] ||= []
+       options[:methods] << :url
+       super(options)
+     end
+
+    end
 
 
 ## Usage
